@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket IO</title>
+</head>
+<body>
+    <h1>Bienvenido a la Sala de Chat</h1>
+    <label for="username">Nombre de Usuario:</label>
+    <input type="text" id="username">
+    <label for="room">Sala:</label>
+    <input type="text" id="room">
+    <button id="join">Entrar a la Sala</button>
+
+    <div id="messages"></div>
+    
+    <label for="message">Mensaje:</label>
+    <input type="text" id="message">
+    <button id="send">Enviar</button>
+
+    <script src="{{ url_for('static', filename='socket.io.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='logic.js') }}"></script>
+</body>
+</html>
