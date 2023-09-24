@@ -58,3 +58,24 @@ socket.on('image', (data) => {
     imageElement.src = data.image;
     messagesDiv.appendChild(imageElement);
 });
+
+//Envio de archivos
+sendFileButton.addEventListener('click', () => {
+    const file = fileInput.files[0];
+    const username = document.querySelector('#username').value;
+    const room = document.querySelector('#room').value;
+    if (file) {
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+            const fileData = event.target.result;
+            socket.emit('file', { username, room, fileData, fileName: file.name });
+        };
+
+        reader.readAsArrayBuffer(file);
+    }
+});
+socket.on('file', (data) => {
+    const messagesDiv = document.querySelector('#messages');
+    messagesDiv.innerHTML += `<p><strong>${data.username} ha enviado un archivo:</strong> <a href="/static/file/${data.fileName}" target="_blank">${data.fileName}</a></p>`;
+});

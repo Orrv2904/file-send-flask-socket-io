@@ -54,5 +54,16 @@ def handle_image(data):
         print(f"Error al guardar la imagen: {str(e)}")
 
 
+@socketio.on('file')
+def handle_file(data):
+    username = data['username']
+    room = data['room']
+    file_data = data['fileData']
+    file_name = data['fileName']
+    with open(f'static/files/{room}_{username}_{file_name}', 'wb') as file:
+        file.write(file_data)
+
+    emit('file', {'username': username, 'fileName': file_name}, room=room, broadcast=True)
+
 if __name__ == '__main__':
     socketio.run(app)
