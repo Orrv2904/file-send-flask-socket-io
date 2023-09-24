@@ -1,12 +1,17 @@
+import os
 from flask import Flask, render_template
 from flask_socketio import SocketIO, join_room, leave_room, emit
 from dotenv import load_dotenv
-
+from base64 import b64decode
 load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'clave_secreta'
 socketio = SocketIO(app)
+
+ruta_absoluta = '/ruta/absoluta/al/directorio/static/images'
+if not os.path.exists(ruta_absoluta):
+    print(f"El directorio {ruta_absoluta} no existe.")
 
 @app.route('/')
 def index():
@@ -32,6 +37,22 @@ def handle_message(data):
     room = data['room']
     message = data['message']
     emit('message', {'username': username, 'message': message}, room=room, broadcast=True)
+
+
+@socketio.on('image')
+def handle_image(data):
+    username = data['username']
+    room = data['room']
+    image_data = data['image']
+    image_binary = b64decode(image_data.split(',')[1])
+    try:
+        with open('static/images/{room}_{username}_image.png', 'wb') as image_file:
+            image_file.write(image_binary)
+
+        emit('image', {'username': username, 'image': image_data}, room=room, broadcast=True)
+    except Exception as e:
+        print(f"Error al guardar la imagen: {str(e)}")
+
 
 if __name__ == '__main__':
     socketio.run(app)
